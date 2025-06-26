@@ -920,6 +920,9 @@ if ("serviceWorker" in navigator) {
   })
 }
 
+
+
+
 // Global error handler
 window.addEventListener("error", (event) => {
   console.error("Global error:", event.error)

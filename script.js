@@ -1,940 +1,1119 @@
-// Employee Management Dashboard - Vanilla JavaScript Implementation
+/* CSS Custom Properties */
+:root {
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-500: #3b82f6;
+  --primary-600: #2563eb;
+  --primary-700: #1d4ed8;
 
-class EmployeeManager {
-  constructor() {
-    // Initial employee data
-    this.employees = [
-      {
-        id: 1,
-        name: "John Doe",
-        email: "john.doe@company.com",
-        department: "Engineering",
-        position: "Senior Developer",
-        salary: 85000,
-        joinDate: "2022-01-15",
-        status: "Active",
-      },
-      {
-        id: 2,
-        name: "Jane Smith",
-        email: "jane.smith@company.com",
-        department: "Marketing",
-        position: "Marketing Manager",
-        salary: 75000,
-        joinDate: "2021-08-20",
-        status: "Active",
-      },
-      {
-        id: 3,
-        name: "Mike Johnson",
-        email: "mike.johnson@company.com",
-        department: "Sales",
-        position: "Sales Representative",
-        salary: 55000,
-        joinDate: "2023-03-10",
-        status: "Active",
-      },
-      {
-        id: 4,
-        name: "Sarah Wilson",
-        email: "sarah.wilson@company.com",
-        department: "HR",
-        position: "HR Specialist",
-        salary: 60000,
-        joinDate: "2022-11-05",
-        status: "Active",
-      },
-      {
-        id: 5,
-        name: "David Brown",
-        email: "david.brown@company.com",
-        department: "Engineering",
-        position: "Frontend Developer",
-        salary: 70000,
-        joinDate: "2023-01-12",
-        status: "Active",
-      },
-      {
-        id: 6,
-        name: "Lisa Davis",
-        email: "lisa.davis@company.com",
-        department: "Finance",
-        position: "Financial Analyst",
-        salary: 65000,
-        joinDate: "2022-06-18",
-        status: "Active",
-      },
-      {
-        id: 7,
-        name: "Tom Anderson",
-        email: "tom.anderson@company.com",
-        department: "Engineering",
-        position: "DevOps Engineer",
-        salary: 80000,
-        joinDate: "2021-12-03",
-        status: "Inactive",
-      },
-      {
-        id: 8,
-        name: "Emily Taylor",
-        email: "emily.taylor@company.com",
-        department: "Marketing",
-        position: "Content Specialist",
-        salary: 50000,
-        joinDate: "2023-05-22",
-        status: "Active",
-      },
-    ]
+  --success-50: #f0fdf4;
+  --success-500: #22c55e;
+  --success-600: #16a34a;
 
-    // State management
-    this.filteredEmployees = [...this.employees]
-    this.currentPage = 1
-    this.itemsPerPage = 5
-    this.sortField = "name"
-    this.sortDirection = "asc"
-    this.searchTerm = ""
-    this.departmentFilter = "all"
-    this.statusFilter = "all"
+  --warning-50: #fffbeb;
+  --warning-500: #f59e0b;
+  --warning-600: #d97706;
 
-    // Initialize the application
-    this.init()
+  --danger-50: #fef2f2;
+  --danger-500: #ef4444;
+  --danger-600: #dc2626;
+
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+
+  --white: #ffffff;
+  --black: #000000;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  --font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
+
+  --sidebar-width: 320px;
+  --header-height: 64px;
+}
+
+/* Reset and Base Styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--gray-700);
+  background-color: var(--gray-50);
+  height: 100%;
+  overflow-x: hidden;
+}
+
+/* Loading Screen */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity var(--transition-normal);
+}
+
+.loading-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--gray-200);
+  border-top: 3px solid var(--primary-600);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: var(--spacing-4);
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
-
-  init() {
-    this.bindEvents()
-    this.populateDepartmentFilters()
-    this.updateDisplay()
-    this.updateStatistics()
-    this.updateSidebar()
-  }
-
-  bindEvents() {
-    // Sidebar toggle
-    const sidebarToggle = document.getElementById("sidebarToggle")
-    const sidebar = document.getElementById("sidebar")
-    const mainContent = document.querySelector(".main-content")
-
-    sidebarToggle?.addEventListener("click", () => {
-      sidebar.classList.toggle("open")
-    })
-
-    // Close sidebar when clicking outside on mobile
-    document.addEventListener("click", (e) => {
-      if (window.innerWidth <= 1024) {
-        if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
-          sidebar.classList.remove("open")
-        }
-      }
-    })
-
-    // Search functionality
-    const searchInput = document.getElementById("searchInput")
-    searchInput?.addEventListener("input", (e) => {
-      this.searchTerm = e.target.value.toLowerCase()
-      this.currentPage = 1
-      this.filterAndSortEmployees()
-      this.updateDisplay()
-    })
-
-    // Filter functionality
-    const departmentFilter = document.getElementById("departmentFilter")
-    departmentFilter?.addEventListener("change", (e) => {
-      this.departmentFilter = e.target.value
-      this.currentPage = 1
-      this.filterAndSortEmployees()
-      this.updateDisplay()
-    })
-
-    const statusFilter = document.getElementById("statusFilter")
-    statusFilter?.addEventListener("change", (e) => {
-      this.statusFilter = e.target.value
-      this.currentPage = 1
-      this.filterAndSortEmployees()
-      this.updateDisplay()
-    })
-
-    // Table sorting
-    const sortableHeaders = document.querySelectorAll(".sortable")
-    sortableHeaders.forEach((header) => {
-      header.addEventListener("click", () => {
-        const sortField = header.getAttribute("data-sort")
-        this.handleSort(sortField)
-      })
-    })
-
-    // Pagination
-    const prevPageBtn = document.getElementById("prevPage")
-    const nextPageBtn = document.getElementById("nextPage")
-
-    prevPageBtn?.addEventListener("click", () => {
-      if (this.currentPage > 1) {
-        this.currentPage--
-        this.updateDisplay()
-      }
-    })
-
-    nextPageBtn?.addEventListener("click", () => {
-      const totalPages = Math.ceil(this.filteredEmployees.length / this.itemsPerPage)
-      if (this.currentPage < totalPages) {
-        this.currentPage++
-        this.updateDisplay()
-      }
-    })
-
-    // Modal functionality
-    const addEmployeeBtn = document.getElementById("addEmployeeBtn")
-    const modal = document.getElementById("addEmployeeModal")
-    const closeModalBtn = document.getElementById("closeModal")
-    const cancelBtn = document.getElementById("cancelBtn")
-    const modalOverlay = document.querySelector(".modal-overlay")
-
-    addEmployeeBtn?.addEventListener("click", () => {
-      this.openModal()
-    })
-
-    closeModalBtn?.addEventListener("click", () => {
-      this.closeModal()
-    })
-
-    cancelBtn?.addEventListener("click", () => {
-      this.closeModal()
-    })
-
-    modalOverlay?.addEventListener("click", () => {
-      this.closeModal()
-    })
-
-    // Form submission
-    const addEmployeeForm = document.getElementById("addEmployeeForm")
-    addEmployeeForm?.addEventListener("submit", (e) => {
-      e.preventDefault()
-      this.handleAddEmployee()
-    })
-
-    // Keyboard navigation
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && !modal.classList.contains("hidden")) {
-        this.closeModal()
-      }
-    })
-
-    // Window resize handler
-    window.addEventListener("resize", () => {
-      if (window.innerWidth > 1024) {
-        sidebar.classList.remove("open")
-      }
-    })
-  }
-
-  populateDepartmentFilters() {
-    const departments = [...new Set(this.employees.map((emp) => emp.department))]
-    const departmentFilter = document.getElementById("departmentFilter")
-    const employeeDepartment = document.getElementById("employeeDepartment")
-
-    // Clear existing options (except "All Departments")
-    if (departmentFilter) {
-      const allOption = departmentFilter.querySelector('option[value="all"]')
-      departmentFilter.innerHTML = ""
-      departmentFilter.appendChild(allOption)
-
-      departments.forEach((dept) => {
-        const option = document.createElement("option")
-        option.value = dept
-        option.textContent = dept
-        departmentFilter.appendChild(option)
-      })
-    }
-
-    // Update modal department select
-    if (employeeDepartment) {
-      const selectOption = employeeDepartment.querySelector('option[value=""]')
-      const existingOptions = Array.from(employeeDepartment.querySelectorAll('option[value]:not([value=""])'))
-
-      existingOptions.forEach((option) => {
-        if (!departments.includes(option.value)) {
-          option.remove()
-        }
-      })
-
-      departments.forEach((dept) => {
-        if (!employeeDepartment.querySelector(`option[value="${dept}"]`)) {
-          const option = document.createElement("option")
-          option.value = dept
-          option.textContent = dept
-          employeeDepartment.appendChild(option)
-        }
-      })
-    }
-  }
-
-  filterAndSortEmployees() {
-    // Filter employees
-    this.filteredEmployees = this.employees.filter((employee) => {
-      const matchesSearch =
-        employee.name.toLowerCase().includes(this.searchTerm) ||
-        employee.email.toLowerCase().includes(this.searchTerm) ||
-        employee.position.toLowerCase().includes(this.searchTerm)
-
-      const matchesDepartment = this.departmentFilter === "all" || employee.department === this.departmentFilter
-      const matchesStatus = this.statusFilter === "all" || employee.status === this.statusFilter
-
-      return matchesSearch && matchesDepartment && matchesStatus
-    })
-
-    // Sort employees
-    this.filteredEmployees.sort((a, b) => {
-      const aValue = a[this.sortField]
-      const bValue = b[this.sortField]
-
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        const comparison = aValue.localeCompare(bValue)
-        return this.sortDirection === "asc" ? comparison : -comparison
-      }
-
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        return this.sortDirection === "asc" ? aValue - bValue : bValue - aValue
-      }
-
-      return 0
-    })
-  }
-
-  handleSort(field) {
-    if (this.sortField === field) {
-      this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc"
-    } else {
-      this.sortField = field
-      this.sortDirection = "asc"
-    }
-
-    this.filterAndSortEmployees()
-    this.updateDisplay()
-    this.updateSortIcons()
-  }
-
-  updateSortIcons() {
-    // Reset all sort icons
-    document.querySelectorAll(".sortable").forEach((header) => {
-      header.classList.remove("sort-asc", "sort-desc")
-    })
-
-    // Set active sort icon
-    const activeHeader = document.querySelector(`[data-sort="${this.sortField}"]`)
-    if (activeHeader) {
-      activeHeader.classList.add(this.sortDirection === "asc" ? "sort-asc" : "sort-desc")
-    }
-  }
-
-  updateDisplay() {
-    this.showLoading()
-
-    // Simulate loading delay for better UX
-    setTimeout(() => {
-      this.renderEmployeeTable()
-      this.renderPagination()
-      this.hideLoading()
-    }, 300)
-  }
-
-  showLoading() {
-    const tableLoading = document.getElementById("tableLoading")
-    const employeeTable = document.getElementById("employeeTable")
-
-    if (tableLoading && employeeTable) {
-      tableLoading.classList.remove("hidden")
-      employeeTable.style.opacity = "0.5"
-    }
-  }
-
-  hideLoading() {
-    const tableLoading = document.getElementById("tableLoading")
-    const employeeTable = document.getElementById("employeeTable")
-
-    if (tableLoading && employeeTable) {
-      tableLoading.classList.add("hidden")
-      employeeTable.style.opacity = "1"
-    }
-  }
-
-  renderEmployeeTable() {
-    const tbody = document.getElementById("employeeTableBody")
-    if (!tbody) return
-
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage
-    const endIndex = startIndex + this.itemsPerPage
-    const paginatedEmployees = this.filteredEmployees.slice(startIndex, endIndex)
-
-    tbody.innerHTML = ""
-
-    if (paginatedEmployees.length === 0) {
-      const row = document.createElement("tr")
-      row.innerHTML = `
-                <td colspan="6" style="text-align: center; padding: 2rem; color: var(--neutral-500);">
-                    <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
-                    No employees found matching your criteria.
-                </td>
-            `
-      tbody.appendChild(row)
-      return
-    }
-
-    paginatedEmployees.forEach((employee) => {
-      const row = document.createElement("tr")
-      row.innerHTML = `
-                <td>
-                    <div class="employee-info">
-                        <div class="employee-name">${this.escapeHtml(employee.name)}</div>
-                        <div class="employee-email">${this.escapeHtml(employee.email)}</div>
-                    </div>
-                </td>
-                <td>
-                    <span class="badge badge-department">${this.escapeHtml(employee.department)}</span>
-                </td>
-                <td>${this.escapeHtml(employee.position)}</td>
-                <td class="salary">$${employee.salary.toLocaleString()}</td>
-                <td>
-                    <span class="badge ${employee.status === "Active" ? "badge-active" : "badge-inactive"}">
-                        ${employee.status}
-                    </span>
-                </td>
-                <td>${this.formatDate(employee.joinDate)}</td>
-            `
-      tbody.appendChild(row)
-    })
-
-    this.updateSortIcons()
-  }
-
-  renderPagination() {
-    const totalPages = Math.ceil(this.filteredEmployees.length / this.itemsPerPage)
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage
-    const endIndex = Math.min(startIndex + this.itemsPerPage, this.filteredEmployees.length)
-
-    // Update pagination info
-    const paginationInfo = document.getElementById("paginationInfo")
-    if (paginationInfo) {
-      paginationInfo.textContent = `Showing ${startIndex + 1} to ${endIndex} of ${this.filteredEmployees.length} employees`
-    }
-
-    // Update pagination controls
-    const prevPageBtn = document.getElementById("prevPage")
-    const nextPageBtn = document.getElementById("nextPage")
-    const pageNumbers = document.getElementById("pageNumbers")
-
-    if (prevPageBtn) {
-      prevPageBtn.disabled = this.currentPage === 1
-    }
-
-    if (nextPageBtn) {
-      nextPageBtn.disabled = this.currentPage === totalPages || totalPages === 0
-    }
-
-    // Render page numbers
-    if (pageNumbers) {
-      pageNumbers.innerHTML = ""
-
-      if (totalPages <= 7) {
-        // Show all pages if 7 or fewer
-        for (let i = 1; i <= totalPages; i++) {
-          pageNumbers.appendChild(this.createPageButton(i))
-        }
-      } else {
-        // Show first page
-        pageNumbers.appendChild(this.createPageButton(1))
-
-        if (this.currentPage > 4) {
-          const ellipsis = document.createElement("span")
-          ellipsis.textContent = "..."
-          ellipsis.className = "page-ellipsis"
-          pageNumbers.appendChild(ellipsis)
-        }
-
-        // Show pages around current page
-        const start = Math.max(2, this.currentPage - 1)
-        const end = Math.min(totalPages - 1, this.currentPage + 1)
-
-        for (let i = start; i <= end; i++) {
-          pageNumbers.appendChild(this.createPageButton(i))
-        }
-
-        if (this.currentPage < totalPages - 3) {
-          const ellipsis = document.createElement("span")
-          ellipsis.textContent = "..."
-          ellipsis.className = "page-ellipsis"
-          pageNumbers.appendChild(ellipsis)
-        }
-
-        // Show last page
-        if (totalPages > 1) {
-          pageNumbers.appendChild(this.createPageButton(totalPages))
-        }
-      }
-    }
-  }
-
-  createPageButton(pageNumber) {
-    const button = document.createElement("button")
-    button.textContent = pageNumber
-    button.className = `page-btn ${pageNumber === this.currentPage ? "active" : ""}`
-    button.addEventListener("click", () => {
-      this.currentPage = pageNumber
-      this.updateDisplay()
-    })
-    return button
-  }
-
-  updateStatistics() {
-    const activeEmployees = this.employees.filter((emp) => emp.status === "Active")
-    const departments = [...new Set(this.employees.map((emp) => emp.department))]
-    const totalSalary = activeEmployees.reduce((sum, emp) => sum + emp.salary, 0)
-    const averageSalary = activeEmployees.length > 0 ? Math.round(totalSalary / activeEmployees.length) : 0
-
-    // Update main statistics
-    const totalEmployeesEl = document.getElementById("totalEmployees")
-    const activeEmployeesTextEl = document.getElementById("activeEmployeesText")
-    const totalDepartmentsEl = document.getElementById("totalDepartments")
-    const averageSalaryEl = document.getElementById("averageSalary")
-
-    if (totalEmployeesEl) totalEmployeesEl.textContent = this.employees.length
-    if (activeEmployeesTextEl) activeEmployeesTextEl.textContent = `${activeEmployees.length} active`
-    if (totalDepartmentsEl) totalDepartmentsEl.textContent = departments.length
-    if (averageSalaryEl) averageSalaryEl.textContent = `$${averageSalary.toLocaleString()}`
-
-    // Update quick stats in sidebar
-    const quickActiveCount = document.getElementById("quickActiveCount")
-    const quickDeptCount = document.getElementById("quickDeptCount")
-    const quickAvgSalary = document.getElementById("quickAvgSalary")
-
-    if (quickActiveCount) quickActiveCount.textContent = activeEmployees.length
-    if (quickDeptCount) quickDeptCount.textContent = departments.length
-    if (quickAvgSalary) quickAvgSalary.textContent = `$${Math.round(averageSalary / 1000)}k`
-  }
-
-  updateSidebar() {
-    const departmentCounts = this.employees.reduce((acc, emp) => {
-      acc[emp.department] = (acc[emp.department] || 0) + 1
-      return acc
-    }, {})
-
-    const departmentOverview = document.getElementById("departmentOverview")
-    if (departmentOverview) {
-      departmentOverview.innerHTML = ""
-
-      Object.entries(departmentCounts).forEach(([dept, count]) => {
-        const deptItem = document.createElement("div")
-        deptItem.className = "dept-item"
-        deptItem.innerHTML = `
-                    <div class="dept-info">
-                        <i class="fas fa-building"></i>
-                        <span class="dept-name">${this.escapeHtml(dept)}</span>
-                    </div>
-                    <span class="dept-count">${count}</span>
-                `
-        departmentOverview.appendChild(deptItem)
-      })
-    }
-  }
-
-  openModal() {
-    const modal = document.getElementById("addEmployeeModal")
-    if (modal) {
-      modal.classList.remove("hidden")
-      document.body.style.overflow = "hidden"
-
-      // Focus first input
-      const firstInput = modal.querySelector("input")
-      if (firstInput) {
-        setTimeout(() => firstInput.focus(), 100)
-      }
-    }
-  }
-
-  closeModal() {
-    const modal = document.getElementById("addEmployeeModal")
-    if (modal) {
-      modal.classList.add("hidden")
-      document.body.style.overflow = ""
-      this.resetForm()
-    }
-  }
-
-  resetForm() {
-    const form = document.getElementById("addEmployeeForm")
-    if (form) {
-      form.reset()
-      this.clearErrors()
-    }
-  }
-
-  clearErrors() {
-    const errorElements = document.querySelectorAll(".error-message")
-    const inputElements = document.querySelectorAll(".form-input, .form-select")
-
-    errorElements.forEach((el) => (el.textContent = ""))
-    inputElements.forEach((el) => el.classList.remove("error"))
-  }
-
-  validateForm(formData) {
-    const errors = {}
-
-    if (!formData.name.trim()) {
-      errors.name = "Full name is required"
-    }
-
-    if (!formData.email.trim()) {
-      errors.email = "Email is required"
-    } else if (!this.isValidEmail(formData.email)) {
-      errors.email = "Please enter a valid email address"
-    } else if (this.employees.some((emp) => emp.email.toLowerCase() === formData.email.toLowerCase())) {
-      errors.email = "Email already exists"
-    }
-
-    if (!formData.department) {
-      errors.department = "Department is required"
-    }
-
-    if (!formData.position.trim()) {
-      errors.position = "Position is required"
-    }
-
-    if (!formData.salary || formData.salary <= 0) {
-      errors.salary = "Please enter a valid salary"
-    }
-
-    return errors
-  }
-
-  displayErrors(errors) {
-    this.clearErrors()
-
-    Object.keys(errors).forEach((field) => {
-      const errorElement = document.getElementById(`${field}Error`)
-      const inputElement = document.getElementById(`employee${field.charAt(0).toUpperCase() + field.slice(1)}`)
-
-      if (errorElement) {
-        errorElement.textContent = errors[field]
-      }
-
-      if (inputElement) {
-        inputElement.classList.add("error")
-      }
-    })
-  }
-
-  async handleAddEmployee() {
-    const form = document.getElementById("addEmployeeForm")
-    const submitBtn = document.getElementById("submitBtn")
-
-    if (!form || !submitBtn) return
-
-    const formData = {
-      name: form.name.value.trim(),
-      email: form.email.value.trim(),
-      department: form.department.value,
-      position: form.position.value.trim(),
-      salary: Number.parseInt(form.salary.value),
-    }
-
-    // Validate form
-    const errors = this.validateForm(formData)
-    if (Object.keys(errors).length > 0) {
-      this.displayErrors(errors)
-      return
-    }
-
-    // Show loading state
-    submitBtn.classList.add("loading")
-    submitBtn.disabled = true
-
-    try {
-      // Simulate API call
-      await this.simulateApiCall(1000)
-
-      // Add employee
-      const newEmployee = {
-        id: Math.max(...this.employees.map((e) => e.id)) + 1,
-        name: formData.name,
-        email: formData.email,
-        department: formData.department,
-        position: formData.position,
-        salary: formData.salary,
-        joinDate: new Date().toISOString().split("T")[0],
-        status: "Active",
-      }
-
-      this.employees.push(newEmployee)
-      this.filterAndSortEmployees()
-      this.updateDisplay()
-      this.updateStatistics()
-      this.updateSidebar()
-      this.populateDepartmentFilters()
-
-      this.closeModal()
-      this.showSuccessMessage("Employee added successfully!")
-    } catch (error) {
-      console.error("Error adding employee:", error)
-      this.showErrorMessage("Failed to add employee. Please try again.")
-    } finally {
-      submitBtn.classList.remove("loading")
-      submitBtn.disabled = false
-    }
-  }
-
-  simulateApiCall(delay) {
-    return new Promise((resolve) => setTimeout(resolve, delay))
-  }
-
-  showSuccessMessage(message) {
-    this.showToast(message, "success")
-  }
-
-  showErrorMessage(message) {
-    this.showToast(message, "error")
-  }
-
-  showToast(message, type = "info") {
-    // Create toast element
-    const toast = document.createElement("div")
-    toast.className = `toast toast-${type}`
-    toast.innerHTML = `
-            <div class="toast-content">
-                <i class="fas ${type === "success" ? "fa-check-circle" : type === "error" ? "fa-exclamation-circle" : "fa-info-circle"}"></i>
-                <span>${this.escapeHtml(message)}</span>
-            </div>
-        `
-
-    // Add toast styles if not already added
-    if (!document.querySelector(".toast-styles")) {
-      const style = document.createElement("style")
-      style.className = "toast-styles"
-      style.textContent = `
-                .toast {
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    background: var(--white);
-                    border: 1px solid var(--neutral-200);
-                    border-radius: var(--border-radius);
-                    box-shadow: var(--shadow-lg);
-                    padding: 1rem;
-                    z-index: 4000;
-                    min-width: 300px;
-                    animation: slideIn 0.3s ease;
-                }
-                
-                .toast-success {
-                    border-left: 4px solid var(--success-green);
-                }
-                
-                .toast-error {
-                    border-left: 4px solid var(--danger-red);
-                }
-                
-                .toast-content {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                }
-                
-                .toast-success .toast-content i {
-                    color: var(--success-green);
-                }
-                
-                .toast-error .toast-content i {
-                    color: var(--danger-red);
-                }
-                
-                @keyframes slideIn {
-                    from {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                }
-                
-                @keyframes slideOut {
-                    from {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                    to {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                }
-            `
-      document.head.appendChild(style)
-    }
-
-    // Add toast to DOM
-    document.body.appendChild(toast)
-
-    // Remove toast after 3 seconds
-    setTimeout(() => {
-      toast.style.animation = "slideOut 0.3s ease"
-      setTimeout(() => {
-        if (toast.parentNode) {
-          toast.parentNode.removeChild(toast)
-        }
-      }, 300)
-    }, 3000)
-  }
-
-  isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return emailRegex.test(email)
-  }
-
-  formatDate(dateString) {
-    const date = new Date(dateString)
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    })
-  }
-
-  escapeHtml(text) {
-    const div = document.createElement("div")
-    div.textContent = text
-    return div.innerHTML
-  }
-
-  // Error handling
-  handleError(error, context = "") {
-    console.error(`Error in ${context}:`, error)
-    this.showErrorMessage("An unexpected error occurred. Please try again.")
-  }
-
-  // Data persistence (localStorage)
-  saveToLocalStorage() {
-    try {
-      localStorage.setItem("employeeData", JSON.stringify(this.employees))
-    } catch (error) {
-      console.warn("Could not save to localStorage:", error)
-    }
-  }
-
-  loadFromLocalStorage() {
-    try {
-      const saved = localStorage.getItem("employeeData")
-      if (saved) {
-        this.employees = JSON.parse(saved)
-        return true
-      }
-    } catch (error) {
-      console.warn("Could not load from localStorage:", error)
-    }
-    return false
-  }
-
-  // Export functionality (bonus feature)
-  exportToCSV() {
-    const headers = ["Name", "Email", "Department", "Position", "Salary", "Join Date", "Status"]
-    const csvContent = [
-      headers.join(","),
-      ...this.employees.map((emp) =>
-        [
-          `"${emp.name}"`,
-          `"${emp.email}"`,
-          `"${emp.department}"`,
-          `"${emp.position}"`,
-          emp.salary,
-          emp.joinDate,
-          emp.status,
-        ].join(","),
-      ),
-    ].join("\n")
-
-    const blob = new Blob([csvContent], { type: "text/csv" })
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = "employees.csv"
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    window.URL.revokeObjectURL(url)
+  100% {
+    transform: rotate(360deg);
   }
 }
 
-// Initialize the application when DOM is loaded
-document.addEventListener("DOMContentLoaded", () => {
-  try {
-    window.employeeManager = new EmployeeManager()
-  } catch (error) {
-    console.error("Failed to initialize Employee Manager:", error)
-
-    // Show fallback error message
-    const errorDiv = document.createElement("div")
-    errorDiv.innerHTML = `
-            <div style="
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: white;
-                padding: 2rem;
-                border-radius: 8px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                text-align: center;
-                z-index: 9999;
-            ">
-                <h2 style="color: #ef4444; margin-bottom: 1rem;">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    Application Error
-                </h2>
-                <p style="margin-bottom: 1rem;">
-                    Failed to initialize the Employee Management Dashboard.
-                </p>
-                <button onclick="location.reload()" style="
-                    background: #2563eb;
-                    color: white;
-                    border: none;
-                    padding: 0.5rem 1rem;
-                    border-radius: 4px;
-                    cursor: pointer;
-                ">
-                    Reload Page
-                </button>
-            </div>
-        `
-    document.body.appendChild(errorDiv)
-  }
-})
-
-// Service Worker registration for offline functionality (optional)
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/sw.js")
-      .then((registration) => {
-        console.log("SW registered: ", registration)
-      })
-      .catch((registrationError) => {
-        console.log("SW registration failed: ", registrationError)
-      })
-  })
+/* Toast Notifications */
+.toast-container {
+  position: fixed;
+  top: var(--spacing-6);
+  right: var(--spacing-6);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
 }
 
+.toast {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-4) var(--spacing-5);
+  border-left: 4px solid;
+  min-width: 320px;
+  animation: slideInRight var(--transition-normal);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
 
+.toast.success {
+  border-left-color: var(--success-500);
+}
+.toast.error {
+  border-left-color: var(--danger-500);
+}
+.toast.info {
+  border-left-color: var(--primary-500);
+}
+.toast.warning {
+  border-left-color: var(--warning-500);
+}
 
-
-// Global error handler
-window.addEventListener("error", (event) => {
-  console.error("Global error:", event.error)
-  if (window.employeeManager) {
-    window.employeeManager.handleError(event.error, "Global")
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
   }
-})
-
-// Handle unhandled promise rejections
-window.addEventListener("unhandledrejection", (event) => {
-  console.error("Unhandled promise rejection:", event.reason)
-  if (window.employeeManager) {
-    window.employeeManager.handleError(event.reason, "Promise")
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
-})
+}
+
+/* App Container */
+.app-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+  height: var(--header-height);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.header-content {
+  height: 100%;
+  max-width: 100%;
+  padding: 0 var(--spacing-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.sidebar-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-2);
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+}
+
+.sidebar-toggle:hover {
+  background: var(--gray-100);
+}
+
+.sidebar-toggle span {
+  width: 20px;
+  height: 2px;
+  background: var(--gray-600);
+  border-radius: 1px;
+  transition: var(--transition-fast);
+}
+
+.header-title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+/* Main Layout */
+.main-layout {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--white);
+  border-right: 1px solid var(--gray-200);
+  overflow-y: auto;
+  transition: transform var(--transition-normal);
+}
+
+.sidebar-content {
+  padding: var(--spacing-6);
+}
+
+.search-section {
+  margin-bottom: var(--spacing-8);
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: var(--spacing-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-400);
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-10) var(--spacing-3) var(--spacing-10);
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  transition: var(--transition-fast);
+  background: var(--white);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+}
+
+.clear-search {
+  position: absolute;
+  right: var(--spacing-3);
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--gray-400);
+  cursor: pointer;
+  font-size: var(--font-size-lg);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: var(--transition-fast);
+}
+
+.clear-search:hover {
+  background: var(--gray-100);
+  color: var(--gray-600);
+}
+
+.filter-section {
+  margin-bottom: var(--spacing-6);
+}
+
+.filter-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: var(--spacing-5);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 2px solid var(--primary-500);
+}
+
+.filter-group {
+  margin-bottom: var(--spacing-5);
+}
+
+.filter-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--gray-700);
+  margin-bottom: var(--spacing-2);
+}
+
+.filter-select {
+  width: 100%;
+  padding: var(--spacing-3);
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  background: var(--white);
+  transition: var(--transition-fast);
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+}
+
+.salary-range {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.salary-input {
+  flex: 1;
+  padding: var(--spacing-3);
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  background: var(--white);
+  transition: var(--transition-fast);
+}
+
+.salary-input:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+}
+
+.salary-separator {
+  color: var(--gray-400);
+  font-weight: 500;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: var(--spacing-6);
+  overflow-y: auto;
+  background: var(--gray-50);
+}
+
+/* Statistics Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-5);
+  margin-bottom: var(--spacing-8);
+}
+
+.stat-card {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  transition: var(--transition-normal);
+  border: 1px solid var(--gray-200);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-card-primary .stat-icon {
+  background: var(--primary-50);
+  color: var(--primary-600);
+}
+
+.stat-card-success .stat-icon {
+  background: var(--success-50);
+  color: var(--success-600);
+}
+
+.stat-card-info .stat-icon {
+  background: var(--primary-50);
+  color: var(--primary-600);
+}
+
+.stat-card-warning .stat-icon {
+  background: var(--warning-50);
+  color: var(--warning-600);
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-number {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: var(--spacing-1);
+}
+
+.stat-label {
+  font-size: var(--font-size-sm);
+  color: var(--gray-500);
+  font-weight: 500;
+}
+
+/* Table Controls */
+.table-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-5);
+  padding: var(--spacing-4);
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+}
+
+.table-controls-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-2) var(--spacing-4);
+  background: var(--primary-50);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--primary-200);
+}
+
+.bulk-selected {
+  font-size: var(--font-size-sm);
+  color: var(--primary-700);
+  font-weight: 500;
+}
+
+.results-info {
+  font-size: var(--font-size-sm);
+  color: var(--gray-600);
+  font-weight: 500;
+}
+
+.items-per-page {
+  padding: var(--spacing-2) var(--spacing-3);
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  background: var(--white);
+}
+
+/* Table */
+.table-container {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--gray-200);
+  margin-bottom: var(--spacing-6);
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.employee-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.employee-table th,
+.employee-table td {
+  padding: var(--spacing-4) var(--spacing-5);
+  text-align: left;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.employee-table th {
+  background: var(--gray-50);
+  font-weight: 600;
+  color: var(--gray-700);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+.employee-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: var(--transition-fast);
+  position: relative;
+}
+
+.employee-table th.sortable:hover {
+  background: var(--gray-100);
+  color: var(--primary-600);
+}
+
+.sort-indicator {
+  margin-left: var(--spacing-2);
+  opacity: 0.5;
+  font-size: var(--font-size-xs);
+}
+
+.employee-table th.sorted-asc .sort-indicator::after {
+  content: "↑";
+  opacity: 1;
+  color: var(--primary-600);
+}
+
+.employee-table th.sorted-desc .sort-indicator::after {
+  content: "↓";
+  opacity: 1;
+  color: var(--primary-600);
+}
+
+.employee-table tbody tr {
+  transition: var(--transition-fast);
+}
+
+.employee-table tbody tr:hover {
+  background: var(--gray-50);
+}
+
+.employee-table td {
+  font-size: var(--font-size-sm);
+  color: var(--gray-700);
+}
+
+.checkbox-column,
+.actions-column {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary-600);
+}
+
+.employee-name {
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.employee-email {
+  color: var(--primary-600);
+}
+
+.employee-salary::before {
+  content: "$";
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-badge.active {
+  background: var(--success-50);
+  color: var(--success-700);
+}
+
+.status-badge.inactive {
+  background: var(--danger-50);
+  color: var(--danger-700);
+}
+
+.action-buttons {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.action-btn {
+  padding: var(--spacing-2);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  font-size: var(--font-size-sm);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn.edit {
+  background: var(--primary-50);
+  color: var(--primary-600);
+}
+
+.action-btn.edit:hover {
+  background: var(--primary-100);
+}
+
+.action-btn.delete {
+  background: var(--danger-50);
+  color: var(--danger-600);
+}
+
+.action-btn.delete:hover {
+  background: var(--danger-100);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-12) var(--spacing-6);
+  color: var(--gray-500);
+}
+
+.empty-state svg {
+  margin-bottom: var(--spacing-4);
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: var(--spacing-2);
+}
+
+/* Pagination */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--spacing-6);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.pagination-btn {
+  padding: var(--spacing-2) var(--spacing-4);
+  border: 1px solid var(--gray-300);
+  background: var(--white);
+  color: var(--gray-600);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  font-size: var(--font-size-sm);
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: var(--gray-50);
+  border-color: var(--primary-500);
+  color: var(--primary-600);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-btn.active {
+  background: var(--primary-600);
+  border-color: var(--primary-600);
+  color: var(--white);
+}
+
+.pagination-info {
+  margin: 0 var(--spacing-4);
+  font-size: var(--font-size-sm);
+  color: var(--gray-600);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-5);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  text-decoration: none;
+  white-space: nowrap;
+  position: relative;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--primary-600);
+  color: var(--white);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-700);
+}
+
+.btn-secondary {
+  background: var(--gray-100);
+  color: var(--gray-700);
+  border-color: var(--gray-300);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--gray-200);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--gray-700);
+  border-color: var(--gray-300);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: var(--gray-50);
+  border-color: var(--primary-500);
+  color: var(--primary-600);
+}
+
+.btn-danger {
+  background: var(--danger-600);
+  color: var(--white);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--danger-700);
+}
+
+.btn-sm {
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--font-size-xs);
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.btn-loading {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: none;
+}
+
+.modal.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.modal-dialog {
+  position: relative;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn var(--transition-normal);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-content {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-6);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.modal-title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--gray-400);
+  padding: var(--spacing-2);
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+}
+
+.modal-close:hover {
+  background: var(--gray-100);
+  color: var(--gray-600);
+}
+
+.modal-body {
+  padding: var(--spacing-6);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+  padding: var(--spacing-6);
+  border-top: 1px solid var(--gray-200);
+  background: var(--gray-50);
+}
+
+/* Form Elements */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-5);
+}
+
+.form-group {
+  margin-bottom: var(--spacing-5);
+}
+
+.form-label {
+  display: block;
+  margin-bottom: var(--spacing-2);
+  font-weight: 500;
+  color: var(--gray-700);
+  font-size: var(--font-size-sm);
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  transition: var(--transition-fast);
+  background: var(--white);
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+}
+
+.form-error {
+  display: block;
+  margin-top: var(--spacing-1);
+  font-size: var(--font-size-xs);
+  color: var(--danger-600);
+  min-height: 1.25rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .sidebar {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    height: calc(100vh - var(--header-height));
+    z-index: 200;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-toggle {
+    display: flex;
+  }
+
+  .main-content {
+    width: 100%;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    padding: 0 var(--spacing-4);
+  }
+
+  .header-title {
+    font-size: var(--font-size-lg);
+  }
+
+  .header-actions {
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+
+  .main-content {
+    padding: var(--spacing-4);
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .table-controls {
+    flex-direction: column;
+    gap: var(--spacing-3);
+    align-items: stretch;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-dialog {
+    width: 95%;
+    margin: var(--spacing-4);
+  }
+
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: var(--spacing-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-content {
+    padding: var(--spacing-4);
+  }
+
+  .stat-card {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--spacing-4);
+  }
+
+  .stat-icon {
+    margin-bottom: var(--spacing-2);
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+  }
+
+  .pagination-info {
+    order: -1;
+    width: 100%;
+    text-align: center;
+    margin-bottom: var(--spacing-3);
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.btn:focus-visible,
+.form-input:focus-visible,
+.form-select:focus-visible,
+.sortable:focus-visible,
+.action-btn:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+  .sidebar,
+  .header-actions,
+  .table-controls,
+  .pagination-container,
+  .action-buttons {
+    display: none !important;
+  }
+
+  .main-layout {
+    display: block;
+  }
+
+  .main-content {
+    padding: 0;
+  }
+
+  .table-container {
+    box-shadow: none;
+    border: 1px solid var(--gray-300);
+  }
+}

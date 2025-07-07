@@ -4,277 +4,302 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Management Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay hidden">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
         <div class="loading-spinner"></div>
-        <p>Loading...</p>
+        <p>Loading Dashboard...</p>
     </div>
 
-    <!-- Sidebar -->
-    <aside id="sidebar" class="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-logo">
-                <div class="logo-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="logo-text">
-                    <h2>HR Dashboard</h2>
-                    <p>Employee Management</p>
-                </div>
-            </div>
-        </div>
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
 
-        <div class="sidebar-content">
-            <!-- Filters Section -->
-            <div class="sidebar-section">
-                <h3 class="sidebar-section-title">
-                    <i class="fas fa-filter"></i>
-                    Filters
-                </h3>
-                <div class="filter-group">
-                    <label for="departmentFilter">Department</label>
-                    <select id="departmentFilter" class="filter-select">
-                        <option value="all">All Departments</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="statusFilter">Status</label>
-                    <select id="statusFilter" class="filter-select">
-                        <option value="all">All Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Department Overview -->
-            <div class="sidebar-section">
-                <h3 class="sidebar-section-title">
-                    <i class="fas fa-chart-bar"></i>
-                    Department Overview
-                </h3>
-                <div id="departmentOverview" class="department-overview">
-                    <!-- Department counts will be populated by JavaScript -->
-                </div>
-            </div>
-        </div>
-
-        <div class="sidebar-footer">
-            <div class="quick-stats-card">
-                <h4>Quick Stats</h4>
-                <div class="stat-item">
-                    <span>Active Employees</span>
-                    <span id="quickActiveCount">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Departments</span>
-                    <span id="quickDeptCount">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Avg. Salary</span>
-                    <span id="quickAvgSalary">$0k</span>
-                </div>
-            </div>
-        </div>
-    </aside>
-
-
-    
-    <!-- Main Content -->
-    <main class="main-content">
+    <div class="app-container">
         <!-- Header -->
         <header class="header">
-            <div class="header-left">
-                <button id="sidebarToggle" class="sidebar-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="header-title">
-                    <h1>Employee Management</h1>
-                    <p>Manage your team efficiently</p>
+            <div class="header-content">
+                <div class="header-left">
+                    <button id="sidebarToggle" class="sidebar-toggle" aria-label="Toggle Sidebar">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <h1 class="header-title">Employee Management</h1>
                 </div>
-            </div>
-            <div class="header-right">
-                <button id="addEmployeeBtn" class="btn btn-primary">
-                    <i class="fas fa-plus"></i>
-                    Add Employee
-                </button>
+                <div class="header-actions">
+                    <button id="exportBtn" class="btn btn-secondary" title="Export to CSV">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                        </svg>
+                        Export
+                    </button>
+                    <button id="addEmployeeBtn" class="btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"/>
+                        </svg>
+                        Add Employee
+                    </button>
+                </div>
             </div>
         </header>
 
-        <!-- Statistics Cards -->
-        <section class="stats-section">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <span class="stat-title">Total Employees</span>
-                        <i class="fas fa-users stat-icon"></i>
-                    </div>
-                    <div class="stat-value" id="totalEmployees">0</div>
-                    <div class="stat-subtitle" id="activeEmployeesText">0 active</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <span class="stat-title">Departments</span>
-                        <i class="fas fa-building stat-icon"></i>
-                    </div>
-                    <div class="stat-value" id="totalDepartments">0</div>
-                    <div class="stat-subtitle">Active departments</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <span class="stat-title">Average Salary</span>
-                        <i class="fas fa-dollar-sign stat-icon"></i>
-                    </div>
-                    <div class="stat-value" id="averageSalary">$0</div>
-                    <div class="stat-subtitle">Per employee</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <span class="stat-title">Growth Rate</span>
-                        <i class="fas fa-trending-up stat-icon growth"></i>
-                    </div>
-                    <div class="stat-value">+12%</div>
-                    <div class="stat-subtitle">This quarter</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Employee Table Section -->
-        <section class="table-section">
-            <div class="table-card">
-                <div class="table-header">
-                    <h2>Employee Directory</h2>
-                    <div class="search-container">
-                        <div class="search-input-wrapper">
-                            <i class="fas fa-search search-icon"></i>
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <aside id="sidebar" class="sidebar">
+                <div class="sidebar-content">
+                    <div class="search-section">
+                        <div class="search-box">
+                            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/>
+                            </svg>
                             <input type="text" id="searchInput" placeholder="Search employees..." class="search-input">
+                            <button id="clearSearch" class="clear-search" title="Clear search">×</button>
                         </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <h3 class="filter-title">Filters</h3>
+                        
+                        <div class="filter-group">
+                            <label class="filter-label">Department</label>
+                            <select id="departmentFilter" class="filter-select">
+                                <option value="">All Departments</option>
+                                <option value="Engineering">Engineering</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Sales">Sales</option>
+                                <option value="HR">HR</option>
+                                <option value="Finance">Finance</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Status</label>
+                            <select id="statusFilter" class="filter-select">
+                                <option value="">All Status</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Salary Range</label>
+                            <div class="salary-range">
+                                <input type="number" id="minSalary" placeholder="Min" class="salary-input">
+                                <span class="salary-separator">-</span>
+                                <input type="number" id="maxSalary" placeholder="Max" class="salary-input">
+                            </div>
+                        </div>
+
+                        <button id="clearFilters" class="btn btn-outline btn-full">Clear All Filters</button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Statistics Cards -->
+                <section class="stats-grid">
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M16,4C18.11,4 20,5.89 20,8A4,4 0 0,1 16,12A4,4 0 0,1 12,8A4,4 0 0,1 16,4M16,14C20.42,14 24,15.79 24,18V20H8V18C8,15.79 11.58,14 16,14Z"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="totalEmployees">0</div>
+                            <div class="stat-label">Total Employees</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-success">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="activeEmployees">0</div>
+                            <div class="stat-label">Active Employees</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-info">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="totalDepartments">0</div>
+                            <div class="stat-label">Departments</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-warning">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M7,15H9C9,16.08 10.37,17 12,17C13.63,17 15,16.08 15,15C15,13.9 13.96,13.5 11.76,12.97C9.64,12.44 7,11.78 7,9C7,7.21 8.47,5.69 10.5,5.18V3H13.5V5.18C15.53,5.69 17,7.21 17,9H15C15,7.92 13.63,7 12,7C10.37,7 9,7.92 9,9C9,10.1 10.04,10.5 12.24,11.03C14.36,11.56 17,12.22 17,15C17,16.79 15.53,18.31 13.5,18.82V21H10.5V18.82C8.47,18.31 7,16.79 7,15Z"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="averageSalary">$0</div>
+                            <div class="stat-label">Average Salary</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Table Controls -->
+                <div class="table-controls">
+                    <div class="table-controls-left">
+                        <div class="bulk-actions" id="bulkActions" style="display: none;">
+                            <span class="bulk-selected" id="bulkSelected">0 selected</span>
+                            <button id="bulkDeleteBtn" class="btn btn-danger btn-sm">Delete Selected</button>
+                        </div>
+                        <div class="results-info" id="resultsInfo">Showing 0 employees</div>
+                    </div>
+                    <div class="table-controls-right">
+                        <select id="itemsPerPage" class="items-per-page">
+                            <option value="10">10 per page</option>
+                            <option value="25">25 per page</option>
+                            <option value="50">50 per page</option>
+                            <option value="100">100 per page</option>
+                        </select>
                     </div>
                 </div>
 
-                <div class="table-content">
-                    <div id="tableLoading" class="table-loading hidden">
-                        <div class="skeleton-rows">
-                            <div class="skeleton-row"></div>
-                            <div class="skeleton-row"></div>
-                            <div class="skeleton-row"></div>
-                            <div class="skeleton-row"></div>
-                            <div class="skeleton-row"></div>
-                        </div>
-                    </div>
-
+                <!-- Employee Table -->
+                <div class="table-container">
                     <div class="table-wrapper">
-                        <table id="employeeTable" class="employee-table">
+                        <table class="employee-table">
                             <thead>
                                 <tr>
-                                    <th class="sortable" data-sort="name">
-                                        Name <i class="fas fa-sort sort-icon"></i>
+                                    <th class="checkbox-column">
+                                        <input type="checkbox" id="selectAll" class="checkbox">
                                     </th>
-                                    <th class="sortable" data-sort="department">
-                                        Department <i class="fas fa-sort sort-icon"></i>
+                                    <th class="sortable" data-sort="name">
+                                        Name
+                                        <span class="sort-indicator"></span>
+                                    </th>
+                                    <th class="sortable" data-sort="email">
+                                        Email
+                                        <span class="sort-indicator"></span>
                                     </th>
                                     <th class="sortable" data-sort="position">
-                                        Position <i class="fas fa-sort sort-icon"></i>
+                                        Position
+                                        <span class="sort-indicator"></span>
+                                    </th>
+                                    <th class="sortable" data-sort="department">
+                                        Department
+                                        <span class="sort-indicator"></span>
                                     </th>
                                     <th class="sortable" data-sort="salary">
-                                        Salary <i class="fas fa-sort sort-icon"></i>
+                                        Salary
+                                        <span class="sort-indicator"></span>
                                     </th>
-                                    <th>Status</th>
-                                    <th class="sortable" data-sort="joinDate">
-                                        Join Date <i class="fas fa-sort sort-icon"></i>
+                                    <th class="sortable" data-sort="status">
+                                        Status
+                                        <span class="sort-indicator"></span>
                                     </th>
+                                    <th class="actions-column">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="employeeTableBody">
-                                <!-- Employee rows will be populated by JavaScript -->
+                                <!-- Employee rows will be inserted here -->
                             </tbody>
                         </table>
                     </div>
-
-                    <!-- Pagination -->
-                    <div id="pagination" class="pagination">
-                        <div class="pagination-info">
-                            <span id="paginationInfo">Showing 0 to 0 of 0 employees</span>
-                        </div>
-                        <div class="pagination-controls">
-                            <button id="prevPage" class="btn btn-outline">Previous</button>
-                            <div id="pageNumbers" class="page-numbers">
-                                <!-- Page numbers will be populated by JavaScript -->
-                            </div>
-                            <button id="nextPage" class="btn btn-outline">Next</button>
-                        </div>
+                    
+                    <!-- Empty State -->
+                    <div id="emptyState" class="empty-state" style="display: none;">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z"/>
+                        </svg>
+                        <h3>No employees found</h3>
+                        <p>Try adjusting your search or filter criteria</p>
                     </div>
                 </div>
-            </div>
-        </section>
-    </main>
 
-    <!-- Add Employee Modal -->
-    <div id="addEmployeeModal" class="modal hidden">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Add New Employee</h3>
-                <button id="closeModal" class="modal-close">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <form id="addEmployeeForm" class="modal-body">
-                <div class="form-group">
-                    <label for="employeeName">Full Name *</label>
-                    <input type="text" id="employeeName" name="name" required class="form-input" placeholder="Enter full name">
-                    <div class="error-message" id="nameError"></div>
+                <!-- Pagination -->
+                <div class="pagination-container">
+                    <div class="pagination" id="pagination"></div>
                 </div>
+            </main>
+        </div>
+    </div>
 
-                <div class="form-group">
-                    <label for="employeeEmail">Email *</label>
-                    <input type="email" id="employeeEmail" name="email" required class="form-input" placeholder="Enter email address">
-                    <div class="error-message" id="emailError"></div>
-                </div>
-
-                <div class="form-group">
-                    <label for="employeeDepartment">Department *</label>
-                    <select id="employeeDepartment" name="department" required class="form-select">
-                        <option value="">Select department</option>
-                        <option value="Engineering">Engineering</option>
-                        <option value="Marketing">Marketing</option>
-                        <option value="Sales">Sales</option>
-                        <option value="HR">HR</option>
-                        <option value="Finance">Finance</option>
-                    </select>
-                    <div class="error-message" id="departmentError"></div>
-                </div>
-
-                <div class="form-group">
-                    <label for="employeePosition">Position *</label>
-                    <input type="text" id="employeePosition" name="position" required class="form-input" placeholder="Enter position">
-                    <div class="error-message" id="positionError"></div>
-                </div>
-
-                <div class="form-group">
-                    <label for="employeeSalary">Salary *</label>
-                    <input type="number" id="employeeSalary" name="salary" required class="form-input" min="0" placeholder="Enter salary">
-                    <div class="error-message" id="salaryError"></div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" id="cancelBtn" class="btn btn-outline">Cancel</button>
-                    <button type="submit" id="submitBtn" class="btn btn-primary">
-                        <span class="btn-text">Add Employee</span>
-                        <span class="btn-loading hidden">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            Adding...
-                        </span>
+    <!-- Employee Modal -->
+    <div id="employeeModal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalTitle">Add New Employee</h2>
+                    <button class="modal-close" id="modalClose" aria-label="Close modal">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+                        </svg>
                     </button>
                 </div>
-            </form>
+                <form id="employeeForm" class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="employeeName" class="form-label">Full Name *</label>
+                            <input type="text" id="employeeName" name="name" class="form-input" required>
+                            <div class="form-error" id="nameError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="employeeEmail" class="form-label">Email Address *</label>
+                            <input type="email" id="employeeEmail" name="email" class="form-input" required>
+                            <div class="form-error" id="emailError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="employeePosition" class="form-label">Position *</label>
+                            <input type="text" id="employeePosition" name="position" class="form-input" required>
+                            <div class="form-error" id="positionError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="employeeDepartment" class="form-label">Department *</label>
+                            <select id="employeeDepartment" name="department" class="form-select" required>
+                                <option value="">Select Department</option>
+                                <option value="Engineering">Engineering</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Sales">Sales</option>
+                                <option value="HR">HR</option>
+                                <option value="Finance">Finance</option>
+                            </select>
+                            <div class="form-error" id="departmentError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="employeeSalary" class="form-label">Annual Salary *</label>
+                            <input type="number" id="employeeSalary" name="salary" class="form-input" min="0" step="1000" required>
+                            <div class="form-error" id="salaryError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="employeeStatus" class="form-label">Status *</label>
+                            <select id="employeeStatus" name="status" class="form-select" required>
+                                <option value="">Select Status</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                            <div class="form-error" id="statusError"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="employeePhone" class="form-label">Phone Number</label>
+                        <input type="tel" id="employeePhone" name="phone" class="form-input">
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="modalCancel">Cancel</button>
+                    <button type="submit" form="employeeForm" class="btn btn-primary" id="modalSave">
+                        <span class="btn-loading" id="saveLoading" style="display: none;"></span>
+                        <span id="saveText">Save Employee</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
